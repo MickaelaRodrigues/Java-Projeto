@@ -1,5 +1,8 @@
 package school.sptech;
 
+import org.springframework.jdbc.core.JdbcTemplate;
+import school.sptech.Exceptions.DadoInvalidoException;
+
 public class MusicaNacional extends Musica {
 
     private String estadoOrigem;
@@ -26,4 +29,39 @@ public class MusicaNacional extends Musica {
     public void setGenero(String genero) {
         this.genero = genero;
     }
+
+    @Override
+    public void cadastrarMusica(Musica musica) {
+        if (musica == null){
+            throw new DadoInvalidoException("Musica inválida");
+        }
+
+
+        DBConnectionProvider db = new DBConnectionProvider();
+
+        JdbcTemplate conexao = db.getConnection();
+
+        String sql = """
+            INSERT INTO musica
+            (titulo, duracao, cantor, compositor, descricao, favorita, estadoOrigem, genero)
+            VALUES (?, ?, ?, ?, ?, ?,?,?)
+            """;
+
+        conexao.update(
+                sql,
+                musica.getTitulo(),
+                musica.getDuracao(),
+                musica.getCantor(),
+                musica.getCompositor(),
+                musica.getDescricao(),
+                musica.getFavorita(),
+                getEstadoOrigem(),
+                getGenero()
+        );
+
+        System.out.println("Musica Nacional cadastrada com sucesso");
+
+
+    }
+
 }
