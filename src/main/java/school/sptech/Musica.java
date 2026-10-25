@@ -1,5 +1,8 @@
 package school.sptech;
 
+import org.springframework.jdbc.core.JdbcTemplate;
+import school.sptech.Exceptions.DadoInvalidoException;
+
 public class Musica {
 
     private String titulo;
@@ -10,12 +13,36 @@ public class Musica {
     private Boolean favorita;
 
     public Musica(String titulo, String cantor, String compositor, Double duracao, String descricao, Boolean favorita) {
+
+        if (titulo == null ||titulo.isBlank()){
+            throw new DadoInvalidoException("Titulo inválido");
+        }
+
+        if (cantor == null ||cantor.isBlank()){
+            throw new DadoInvalidoException("Cantor inválido");
+        }
+        if (compositor == null ||compositor.isBlank()){
+            throw new DadoInvalidoException("Compositor inválido");
+        }
+        if (duracao == null ||duracao<=0 ){
+            throw new DadoInvalidoException("Duração inválido");
+        }
+        if (favorita == null ){
+            throw new DadoInvalidoException("Favorita inválido");
+        }
+        if (descricao == null|| descricao.isBlank()){
+            throw new DadoInvalidoException("Duração inválido");
+        }
+
+
         this.titulo = titulo;
         this.cantor = cantor;
         this.compositor = compositor;
         this.duracao = duracao;
         this.descricao = descricao;
         this.favorita = favorita;
+
+
     }
 
     public String getTitulo() {
@@ -64,5 +91,37 @@ public class Musica {
 
     public void setFavorita(Boolean favorita) {
         this.favorita = favorita;
+    }
+
+    public void cadastrarMusica(Musica musica){
+
+        if (musica == null){
+            throw new DadoInvalidoException("Musica inválida");
+        }
+
+
+        DBConnectionProvider db = new DBConnectionProvider();
+
+        JdbcTemplate conexao = db.getConnection();
+
+        String sql = """
+            INSERT INTO musica
+            (titulo, duracao, cantor, compositor, descricao, favorita)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """;
+
+        conexao.update(
+                sql,
+                musica.getTitulo(),
+                musica.getDuracao(),
+                musica.getCantor(),
+                musica.getCompositor(),
+                musica.getDescricao(),
+                musica.getFavorita()
+        );
+
+        System.out.println("Musica Cadastrada com sucesso");
+
+
     }
 }
