@@ -3,6 +3,8 @@ package school.sptech;
 import org.springframework.jdbc.core.JdbcTemplate;
 import school.sptech.Exceptions.DadoInvalidoException;
 
+import java.util.List;
+
 public class MusicaInternacional extends Musica {
 
     private String paisOrigem;
@@ -89,4 +91,23 @@ public class MusicaInternacional extends Musica {
 
         }
 
+    @Override
+    public List<Musica> listarMusicas() {
+        DBConnectionProvider db = new DBConnectionProvider();
+
+        JdbcTemplate conexao = db.getConnection();
+
+        String sql = """
+                SELECT titulo, duracao, cantor, compositor, descricao, favorita
+                FROM musica
+                """;
+
+        return conexao.query(sql, (musica, rowNum) -> new Musica(
+                musica.getString("titulo"),
+                musica.getString("cantor"),
+                musica.getString("compositor"),
+                musica.getDouble("duracao"),
+                musica.getString("descricao"),
+                musica.getBoolean("favorita")
+        ));    }
 }
