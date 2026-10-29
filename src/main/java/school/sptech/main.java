@@ -15,18 +15,23 @@ public class main {
         Integer opcao = -1;
 
         while (opcao != 0) {
-            System.out.println("\n1 - Cadastrar música");
-            System.out.println("2 - Listar Todas as Músicas");
-            System.out.println("3 - Listar Músicas Favoritas");
+
+            System.out.println("\n===== MENU PRINCIPAL =====");
+            System.out.println("1 - Cadastrar música");
+            System.out.println("2 - Listar todas as músicas");
+            System.out.println("3 - Listar músicas favoritas");
+            System.out.println("4 - Remover música");
             System.out.println("0 - Sair");
             System.out.print("Opção: ");
 
             opcao = Integer.parseInt(scanner.nextLine());
 
             if (opcao == 1) {
-                System.out.println("1 - Nacional");
+
+                System.out.println("\n1 - Nacional");
                 System.out.println("2 - Internacional");
                 System.out.print("Tipo da música: ");
+
                 Integer tipo = Integer.parseInt(scanner.nextLine());
 
                 System.out.print("Título: ");
@@ -45,11 +50,13 @@ public class main {
                 String descricao = scanner.nextLine();
 
                 System.out.print("É favorita? (s/n): ");
-                Boolean favorita = scanner.nextLine().equalsIgnoreCase("s");
+                Boolean favorita = scanner.nextLine()
+                        .equalsIgnoreCase("s");
 
                 Musica novaMusica;
 
                 if (tipo == 1) {
+
                     System.out.print("Estado de origem: ");
                     String estado = scanner.nextLine();
 
@@ -57,11 +64,12 @@ public class main {
                     String genero = scanner.nextLine();
 
                     novaMusica = new MusicaNacional(
-                            titulo, cantor, compositor, duracao, descricao,
-                            favorita, estado, genero
+                            titulo, cantor, compositor, duracao,
+                            descricao, favorita, estado, genero
                     );
 
                 } else if (tipo == 2) {
+
                     System.out.print("País de origem: ");
                     String pais = scanner.nextLine();
 
@@ -69,14 +77,16 @@ public class main {
                     String idioma = scanner.nextLine();
 
                     System.out.print("Possui tradução? (s/n): ");
-                    Boolean traducao = scanner.nextLine().equalsIgnoreCase("s");
+                    Boolean traducao = scanner.nextLine()
+                            .equalsIgnoreCase("s");
 
                     novaMusica = new MusicaInternacional(
-                            titulo, cantor, compositor, duracao, descricao,
-                            favorita, pais, idioma, traducao
+                            titulo, cantor, compositor, duracao,
+                            descricao, favorita, pais, idioma, traducao
                     );
 
                 } else {
+
                     System.out.println("Tipo inválido.");
                     continue;
                 }
@@ -87,23 +97,86 @@ public class main {
 
                 List<Musica> listaMusica = musica.listarMusicas();
 
-                for (Musica musicalistar : listaMusica) {
-                    System.out.println(musicalistar.toString());
+                if (listaMusica.isEmpty()) {
+                    System.out.println("Nenhuma música cadastrada.");
+                    continue;
                 }
 
+                System.out.println("\n===== TODAS AS MÚSICAS =====");
+
+                for (Musica musicaListar : listaMusica) {
+                    System.out.println(musicaListar.toString());
+                }
+
+                System.out.println("\n1 - Adicionar música aos favoritos");
+                System.out.println("2 - Remover música dos favoritos");
+                System.out.println("0 - Voltar");
+                System.out.print("Escolha uma opção: ");
+
+                int escolha = Integer.parseInt(scanner.nextLine());
+
+                if (escolha == 1) {
+
+                    System.out.print("Digite o título da música: ");
+                    String titulo = scanner.nextLine();
+
+                    musica.adicionarFavorita(titulo);
+
+                } else if (escolha == 2) {
+
+                    System.out.print("Digite o título da música: ");
+                    String titulo = scanner.nextLine();
+
+                    musica.removerFavorita(titulo);
+
+                } else if (escolha != 0) {
+
+                    System.out.println("Opção inválida.");
+                }
 
             } else if (opcao == 3) {
 
-             List<Musica> listaMusica = musica.listarMusicas();
+                List<Musica> listaMusica = musica.listarMusicas();
 
-              for (Musica musicalistar : listaMusica) {
-                  if (musicalistar.getFavorita() == true){
-                      System.out.println(musicalistar.toString());
-                      }
-              }
+                System.out.println("\n===== MÚSICAS FAVORITAS =====");
 
+                boolean encontrouFavorita = false;
+
+                for (Musica musicaListar : listaMusica) {
+
+                    if (musicaListar.getFavorita()) {
+                        System.out.println(musicaListar.toString());
+                        encontrouFavorita = true;
+                    }
+                }
+
+                if (!encontrouFavorita) {
+                    System.out.println("Nenhuma música favorita encontrada.");
+                }
+
+            } else if (opcao == 4) {
+
+                System.out.print(
+                        "Digite o título da música que deseja remover: "
+                );
+
+                String titulo = scanner.nextLine();
+
+                musica.removerMusica(titulo);
+
+            } else if (opcao == 0) {
+
+                System.out.println("Encerrando o sistema...");
+
+            } else {
+
+                System.out.println("Opção inválida.");
             }
         }
+
+        scanner.close();
+    }
+}
 
 
 //    // Cadastrando Variaveis no Banco de Dados
@@ -161,6 +234,4 @@ public class main {
 //        }
 //
 //
-    }
 
-}
